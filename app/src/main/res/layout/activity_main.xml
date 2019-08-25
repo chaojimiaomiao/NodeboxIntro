@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
@@ -22,7 +23,7 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:text="节点市场"
+                android:text="兑换中心"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="@color/colorgrayDark"
@@ -38,9 +39,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
                 android:background="@drawable/search_bar"
+                app:defaultQueryHint="搜索节点市场"
                 app:searchIcon="@mipmap/search_icon"
                 app:closeIcon="@mipmap/close_icon" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/open_access"
+            android:text="您还没有开启无障碍功能，无法智能安装，点此开启 ——→"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:padding="10dp"
+            android:background="@color/colorPink"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tabs"
@@ -59,4 +71,4 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-</android.support.design.widget.CoordinatorLayout>
+</LinearLayout>

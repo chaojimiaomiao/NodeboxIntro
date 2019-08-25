@@ -1,5 +1,6 @@
 package com.market.extension.widget;
 
+import android.app.DownloadManager;
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -8,9 +9,11 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.market.extension.R;
 import com.market.extension.util.AppItem;
+import com.market.extension.util.NetworkUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,10 +23,12 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 public class AppListAdapter extends BaseAdapter {
+    private Context mContext;
     private LayoutInflater mInflater;
     private List<AppItem> mData = new ArrayList<>();
 
     public AppListAdapter(Context context){
+        this.mContext = context;
         this.mInflater = LayoutInflater.from(context);
     }
     @Override
@@ -64,6 +69,7 @@ public class AppListAdapter extends BaseAdapter {
             holder = (ViewHolder)convertView.getTag();
         }
         AppItem item = mData.get(position);
+        holder.url = item.download;
         holder.title.setText(item.name);
         holder.info.setText(item.name);
         holder.initProgressBar();
@@ -87,6 +93,7 @@ public class AppListAdapter extends BaseAdapter {
     }
 
     public final class ViewHolder{
+        public String url;
         public ImageView img;
         public TextView title;
         public TextView info;
@@ -116,13 +123,22 @@ public class AppListAdapter extends BaseAdapter {
         }
 
         private void doStartDownLoad() {
+            long downloadId = NetworkUtil.downloadApk(url, mContext);
             progressBar.doStartProgress();
+            //此处指的是过1s做一个操作
             disposable = io.reactivex.Observable.interval(1, TimeUnit.SECONDS)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(aLong -> {
-                        if (aLong >= 9) {
+                        int status = NetworkUtil.getDownloadStatus(downloadId, url, mContext);
+                        if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                            //Toast.makeText(mContext, "下载成功！", Toast.LENGTH_LONG).show();
                             progressBar.doFinishProgress();
+                        } else if (status == DownloadManager.STATUS_FAILED) {
+                            Toast.makeText(mContext, "下载出错", Toast.LENGTH_LONG).show();
+                        }
+                        if (aLong >= 9) {
+                            //progressBar.doFinishProgress();
                         } else {
                             progressBar.setProgress((int) ((aLong + 1) * 10), 100);
                         }
